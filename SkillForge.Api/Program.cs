@@ -29,6 +29,29 @@ using (var scope = app.Services.CreateScope())
 
         db.SaveChanges();
     }
+
+    if (!db.ActivityLogs.Any())
+    {
+        db.ActivityLogs.AddRange(
+            new ActivityLog
+            {
+                SkillId = db.Skills.First().Id,
+                Date = DateOnly.FromDateTime(DateTime.Today),
+                Minutes = 45,
+                Notes = "Warm-up practice"
+            },
+            new ActivityLog
+            {
+                SkillId = db.Skills.Skip(1).First().Id,
+                Date = DateOnly.FromDateTime(DateTime.Today.AddDays(-1)),
+                Minutes = 30,
+                Notes = "Built a small component"
+            }
+        );
+
+        db.SaveChanges();
+    }
+
 }
 
 // Configure the HTTP request pipeline.
