@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
-import { createSkill, getSkills } from "./api/skills";
+import { 
+  createSkill,
+  getSkills,
+  updateSkill,
+  deleteSkill,
+} from "./api/skills";
 import type { Skill } from "./api/skills";
 import {
   createActivityLog,
   getActivityLogs,
+  updateActivityLog,
+  deleteActivityLog,
 } from "./api/activitylogs";
 import type { ActivityLog } from "./api/activitylogs";
 import "./App.css";
@@ -13,15 +20,26 @@ export default function App() {
   const [logs, setLogs] = useState<ActivityLog[]>([]);
   const [error, setError] = useState("");
 
-  // Skill form
+  // Skill create form
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
 
-  // Log form
+  // Skill edit form
+  const [editingSkillId, setEditingSkillId] = useState<number | null>(null);
+  const [editSkillName, setEditSkillName] = useState("");
+  const [editSkillDescription, setEditSkillDescription] = useState("");
+
+  // Log create form
   const [logSkillId, setLogSkillId] = useState<number | "">("");
   const [logDate, setLogDate] = useState("");
   const [logMinutes, setLogMinutes] = useState(30);
   const [logNotes, setLogNotes] = useState("");
+
+  // Log edit form
+  const [editingLogId, setEditingLogId] = useState<number | null>(null);
+  const [editLogDate, setEditLogDate] = useState("");
+  const [editLogMinutes, setEditLogMinutes] = useState(30);
+  const [editLogNotes, setEditLogNotes] = useState("");
 
   useEffect(() => {
     getSkills()
@@ -50,6 +68,42 @@ export default function App() {
     }
   }
 
+  function startEditSkill(skill: Skill) {
+    setEditingSkillId(skill.id);
+    setEditSkillName(skill.name);
+    setEditSkillDescription(skill.description ?? "");
+  }
+
+  async function saveSkill(id: number) {
+    setError("");
+    try {
+      await updateSkill(id, {
+        name: editSkillName,
+        description: editSkillDescription || undefined,
+      });
+      setSkills((prev) => 
+        prev.map((s) =>
+          s.id === id
+            ? { ...s, name: editSkillName, description: editSkillDescription || null}
+            : s
+          )
+        );
+        setEditingSkillId(null);
+      } catch (e:any) {
+        setError(e.message);
+    }
+  }
+
+  async function removeSkill(id: number) {
+    setError("");
+    try {
+      await deleteSkill(id);
+      setSkills((prev) => prev.filter((s) => s.id !== id));
+    } catch (e:any) {
+      setError(e.message);
+    }
+  }
+
   async function onCreateLog(e: React.FormEvent) {
     e.preventDefault();
     setError("");
@@ -71,6 +125,44 @@ export default function App() {
       setLogDate("");
       setLogMinutes(30);
       setLogNotes("");
+    } catch (e: any) {
+      setError(e.message);
+    }
+  }
+
+  function startEditLog(log: ActivityLog) {
+    setEditingLogId(log.id);
+    setEditLogDate(log.date);
+    setEditLogMinutes(log.minutes);
+    setEditLogNotes(log.notes ?? "");
+  }
+
+  async function saveLog(id: number) {
+    setError("");
+    try {
+      await updateActivityLog(id, {
+        date: editLogDate,
+        minutes: editLogMinutes,
+        notes: editLogNotes || undefined,
+      });
+      setLogs((prev) =>
+        prev.map((l) =>
+          l.id === id
+            ? { ...l, date: editLogDate, minutes: editLogMinutes, notes: editLogNotes || null }
+            : l
+          )
+        );
+        setEditingLogId(null);
+    } catch (e:any) {
+      setError(e.message);
+    }
+  }
+
+  async function removeLog(id: number) {
+    setError("");
+    try {
+      await deleteActivityLog(id);
+      setLogs((prev) => prev.filter((l) => l.id !== id));
     } catch (e: any) {
       setError(e.message);
     }
@@ -116,12 +208,39 @@ export default function App() {
 
         <ul>
           {skills.map((s) => (
-            <li key={s.id}>
-              <strong>{s.name}</strong>
-              {s.description ? ` — ${s.description}` : ""}
+            <li key={s.id} style={{ marginBottom: 8 }}>
+              {editingSkillId === s.id ? (
+                <>
+                <input
+                  value={editSkillName}
+                  onChange={(e) => setEditSkillName(e.target.value)}
+                  style={{ marginRight: 8 }} 
+                />
+                <input
+                  value={editSkillDescription}
+                  onChange={(e) => setEditSkillDescription(e.target.value)}
+                  style={{ marginRight: 8 }} 
+                />
+                <button onClick={() => saveSkill(s.id)}>Save</button>
+                <button onClick={() => setEditingSkillId(null)} style={{ marginLeft: 6 }}>
+                  Cancel
+                </button>
+              </>
+              ) : (
+                <>
+                <strong>{s.name}</strong>
+                {s.description ? ` — ${s.description}` : ""}
+                <button onClick={() => startEditSkill(s)} style={{ marginLeft: 8 }}>
+                  Edit
+                </button>
+                <button onClick={() => removeSkill(s.id)} style={{ marginLeft: 6}}>
+                  Delete
+                </button>
+                </>
+              )}
             </li>
-          ))}
-        </ul>
+            ))}
+          </ul>
       </section>
 
       <section>
