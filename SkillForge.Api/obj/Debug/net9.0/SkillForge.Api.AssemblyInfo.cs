@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SkillForge.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7ac8a4b3c91d618a40b965ad442b6e5fd0c6a6af")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+289d4065a35065f2e84c7b9cd5a3b62171fd3685")]
 [assembly: System.Reflection.AssemblyProductAttribute("SkillForge.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SkillForge.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
