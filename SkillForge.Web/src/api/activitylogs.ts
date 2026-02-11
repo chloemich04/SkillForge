@@ -33,3 +33,26 @@ export async function createActivityLog(input: {
 
     return res.json();
 }
+
+export async function updateActivityLog(
+    id: number,
+    input: {date: string; minutes: number; notes?: string }
+): Promise<void> {
+    const res = await fetch(`/api/ActivityLogs/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json"},
+        body: JSON.stringify(input),
+    });
+
+    if(!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Failed to update activity log")
+    }
+}
+
+export async function deleteActivityLog(id: number): Promise<void> {
+    const res = await fetch(`/api/ActivityLogs/${id}`, { method: "DELETE" });
+    if(!res.ok) throw new Error("Failed to delete activity log");
+}
+
+

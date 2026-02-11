@@ -28,3 +28,25 @@ export async function createSkill(input: {
 
     return res.json();
 }
+
+export async function updateSkill(
+    id: number,
+    input: {name: string, description?: string }
+): Promise<void> {
+
+    const res = await fetch(`/api/Skills/${id}`, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(input),
+    });
+
+    if(!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Failed to update skill");
+    }
+}
+
+export async function deleteSkill(id: number): Promise<void> {
+    const res = await fetch(`/api/Skills/${id}`, { method: "DELETE" });
+    if(!res.ok) throw new Error("Failed to delete skill");
+}
