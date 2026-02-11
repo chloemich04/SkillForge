@@ -311,13 +311,49 @@ export default function App() {
 
         <ul>
           {logs.map((l) => (
-            <li key={l.id}>
-              <strong>{l.skillName}</strong> — {l.date} — {l.minutes} min
-              {l.notes ? ` — ${l.notes}` : ""}
-            </li>
-          ))}
-        </ul>
-      </section>
-    </div>
+          <li key={l.id} style={{ marginBottom: 8 }}>
+            {editingLogId === l.id ? (
+              <>
+                <input
+                  type="date"
+                  value={editLogDate}
+                  onChange={(e) => setEditLogDate(e.target.value)}
+                  style={{ marginRight: 8 }}
+                />
+                <input
+                  type="number"
+                  min={1}
+                  max={600}
+                  value={editLogMinutes}
+                  onChange={(e) => setEditLogMinutes(Number(e.target.value))}
+                  style={{ marginBottom: 8}}
+                />
+                <input
+                  value={editLogNotes}
+                  onChange={(e) => setEditLogNotes(e.target.value)}
+                  style={{ marginRight: 8 }}
+                />
+                <button onClick={() => saveLog(l.id)}>Save</button>
+                <button onClick={() => setEditingLogId(null)} style={{ marginLeft: 6 }}>
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <>
+                <strong>{l.skillName}</strong> - {l.date} - {l.minutes} min
+                {l.notes ? ` -${l.notes}` : ""}
+                <button onClick={() => startEditLog(l)} style={{ marginLeft: 8 }}>
+                 Edit 
+                </button>
+                <button onClick={() => removeLog(l.id)} style={{ marginLeft: 8 }}>
+                  Delete
+                </button>
+              </>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+  </div>
   );
 }
